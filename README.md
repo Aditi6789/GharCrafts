@@ -1,108 +1,110 @@
-# GharCraft – Full Stack E-Commerce Application
+# 🏺 GharCrafts - Handmade Marketplace
 
-A student portfolio project for a handmade and handcrafted products store. It includes a responsive storefront, Java + Spring Boot REST backend, MySQL persistence, customer registration/login, shopping cart and demo checkout/order history.
+GharCrafts is a full-stack e-commerce platform for handmade and local artisan products. 
+It allows artisans to list their handmade products and customers to browse, search, and order them.
 
-## Features
+Built with **Java, Spring Boot, MySQL, Thymeleaf & Bootstrap**.
 
-- Responsive product catalogue with product images, categories and search
-- 12 sample products inserted automatically on first run
-- Customer registration and login (passwords stored as BCrypt hashes)
-- Session-based authentication
-- Add to cart, change quantity and remove cart items
-- Checkout with delivery address and order creation
-- Stock validation and stock reduction after successful order
-- Order history API
-- Spring Data JPA + MySQL
-- H2 demo profile to run without installing MySQL
+🔗 **Live Demo:** Coming Soon  
+🔗 **GitHub:** https://github.com/Aditi6789/GharCrafts
 
-> This is a learning/portfolio application. It does not integrate a payment gateway, email/SMS service, production-grade security hardening, or an admin dashboard. Product photos are loaded from remote Unsplash image URLs and need an internet connection to display.
+---
 
-## Requirements
+## ✨ Features
 
-- Java 17 or newer
-- Maven 3.8+
-- MySQL 8+ (optional if using the H2 demo profile)
+### 👤 User Features
+- User Registration & Login (Spring Security)
+- Browse products by category (Pottery, Textiles, Jewellery, Woodwork, etc.)
+- Product Search & Filtering
+- Product Details Page with Images
+- Add to Cart & Checkout
+- Order History
 
-## Run with MySQL
+### 🎨 Artisan / Seller Features
+- Add / Edit / Delete Products
+- Manage Product Images & Stock
+- View Orders
 
-1. Start MySQL.
-2. Create a database (or let the configured JDBC URL create it):
-   ```sql
-   CREATE DATABASE gharcraft;
-   ```
-3. Open a terminal in this project folder.
-4. Run:
-   ```bash
-   mvn spring-boot:run
-   ```
-5. Open **http://localhost:8080**.
+### 🛠️ Admin Features
+- Manage Users, Products & Categories
+- View All Orders
 
-Default local MySQL settings in `application.properties` are username `root` and password `root`. Change these for your machine using environment variables:
+---
 
-**Windows PowerShell**
-```powershell
-$env:DB_USERNAME="root"
-$env:DB_PASSWORD="your_mysql_password"
-mvn spring-boot:run
-```
+## 🛠️ Tech Stack
 
-**macOS/Linux**
+| Layer | Technology |
+| :--- | :--- |
+| **Backend** | Java 17, Spring Boot 3, Spring Data JPA, Spring Security |
+| **Frontend** | Thymeleaf, HTML, CSS, Bootstrap, JavaScript |
+| **Database** | MySQL |
+| **Build Tool** | Maven |
+| **IDE** | IntelliJ IDEA |
+
+---
+
+## 📂 Project Structure
+
+GharCrafts/
+├── src/main/java/com/GharCrafts/
+│   ├── controller/     # Web Controllers (Home, Product, Cart, Auth)
+│   ├── model/          # JPA Entities (User, Product, Order, Category)
+│   ├── repository/     # Spring Data JPA Repositories
+│   ├── service/        # Business Logic
+│   └── config/         # Security Config
+├── src/main/resources/
+│   ├── templates/      # Thymeleaf HTML Pages
+│   ├── static/         # CSS, JS, Images
+│   └── http://application.properties
+└── http://pom.xml
+
+---
+
+## ⚙️ How to Run Locally
+
+### 1. Clone the Project
 ```bash
-DB_USERNAME=root DB_PASSWORD='your_mysql_password' mvn spring-boot:run
-```
+git clone https://github.com/Aditi6789/GharCrafts.git
+cd GharCrafts
+### 2. Setup Database (MySQL)
+Create a database in MySQL:
+CREATE DATABASE gharcrafts;
+### 3. Update `application.properties`
+spring.datasource.url=jdbc:mysql://localhost:3306/gharcrafts
+spring.datasource.username=root
+spring.datasource.password=your_password
+spring.jpa.hibernate.ddl-auto=update
+### 4. Run the Project
+In IntelliJ, run `GharCraftApplication.java`
+OR using terminal:
+./mvnw spring-boot:run
+### 5. Open in Browser
+http://localhost:8080
+*Demo Mode (Without MySQL):*
+./mvnw spring-boot:run -Dspring-boot.run.profiles=demo
+---
 
-## Run without MySQL (quick demo)
+## 🔑 API Endpoints
+Method | Endpoint | Description
+`GET` | `/` | Home Page
+`GET` | `/products` | All Products
+`GET` | `/products/{id}` | Product Details
+`GET` | `/cart` | View Cart
+`POST` | `/cart/add` | Add to Cart
+`GET` | `/login` | Login Page
+`GET` | `/register` | Register Page
+---
 
-```bash
-mvn spring-boot:run -Dspring-boot.run.profiles=demo
-```
-Then open **http://localhost:8080**. H2 is in-memory; demo data is recreated after each restart.
+## 👩‍💻 Author
 
-## Main API endpoints
+*Aditi Jain*
+- GitHub: https://github.com/Aditi6789
 
-| Method | Endpoint | Purpose |
-|---|---|---|
-| GET | `/api/products` | List products |
-| GET | `/api/products/{id}` | Product details |
-| POST | `/api/auth/register` | Create customer account |
-| POST | `/api/auth/login` | Sign in |
-| GET | `/api/auth/me` | Current session |
-| POST | `/api/auth/logout` | Sign out |
-| GET | `/api/cart` | View current cart |
-| POST | `/api/cart/items` | Add product (`productId`, `quantity`) |
-| PUT | `/api/cart/items/{id}?quantity=2` | Change quantity |
-| DELETE | `/api/cart/items/{id}` | Remove cart item |
-| POST | `/api/orders` | Place order (`shippingAddress`) |
-| GET | `/api/orders` | Current customer's orders |
+---
 
-Authentication uses the server session cookie. Sign in before using cart and order endpoints.
+## 📝 Future Improvements
+- [ ] Payment Gateway Integration (Razorpay)
+- [ ] Order Tracking System
+- [ ] Wishlist Feature
+- [ ] Product Reviews & Ratings
 
-## Project structure
-
-```text
-GharCraft-Full-Stack-Ecommerce/
-├── pom.xml
-├── README.md
-└── src/
-    └── main/
-        ├── java/com/gharcraft/
-        │   ├── config/       # App config and sample product seeder
-        │   ├── controller/   # REST controllers and error handler
-        │   ├── dto/          # Request DTOs and validation
-        │   ├── model/        # JPA entities
-        │   ├── repository/   # Spring Data repositories
-        │   └── service/      # Current logged-in user helper
-        └── resources/
-            ├── application.properties
-            ├── application-demo.properties
-            └── static/       # HTML, CSS and JavaScript frontend
-```
-
-## Portfolio / interview description
-
-**GharCraft – Full Stack E-Commerce Application**  
-Technologies: Java, Spring Boot, Spring Data JPA, MySQL, HTML, CSS, JavaScript.
-
-Developed a full-stack storefront for handmade and handcrafted products. Implemented product browsing, category filtering, customer registration and login, shopping cart management, and demo order placement through REST APIs. Used Spring Data JPA for database operations and MySQL for persistent storage.
-
-Only describe features you have run and verified yourself in an interview. Before publishing this project, configure your own database credentials and test the complete user flow locally.
