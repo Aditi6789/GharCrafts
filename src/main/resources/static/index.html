@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GharCraft | Handmade, with heart</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="#"><span class="brand-mark">G</span><span>ghar<span class="brand-accent">craft</span><small>HANDMADE WITH HEART</small></span></a>
+  <nav><a href="#shop">Shop</a><a href="#story">Our story</a></nav>
+  <div class="header-actions">
+    <button class="text-btn" id="accountBtn">Sign in</button>
+    <button class="cart-btn" id="cartBtn">Bag <span id="cartCount">0</span></button>
+  </div>
+</header>
+<main>
+  <section class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow">MADE BY HAND · MADE TO LAST</p>
+      <h1>Bring home<br><em>something</em> special.</h1>
+      <p class="hero-text">Thoughtful finds, crafted by hand. Discover pieces that make everyday living feel a little more meaningful.</p>
+      <a class="primary-btn" href="#shop">Explore the collection <span>↗</span></a>
+      <div class="hero-note"><span>✳</span> Celebrating independent craft and timeless design</div>
+    </div>
+    <div class="hero-image"><img src="https://images.unsplash.com/photo-1493106641515-6b5631de4bb9?w=1200" alt="Warm handmade home decor"></div>
+    <div class="hero-stamp">CRAFTED<br>WITH CARE<br>✳</div>
+  </section>
+  <section class="trust-strip"><span>✳ Thoughtfully made</span><span>◇ Artisan inspired</span><span>✳ Made for your home</span><span>◇ Small details, big meaning</span></section>
+  <section class="shop-section" id="shop">
+    <div class="section-heading"><div><p class="eyebrow">THE GHARCRAFT EDIT</p><h2>Find your favourite.</h2></div><p>Little pieces of craft<br>for the spaces you love.</p></div>
+    <div class="shop-tools"><div class="filters" id="filters"><button class="filter active" data-category="">All pieces</button><button class="filter" data-category="Home Decor">Home decor</button><button class="filter" data-category="Kitchen">Kitchen</button><button class="filter" data-category="Textiles">Textiles</button><button class="filter" data-category="Wall Art">Wall art</button><button class="filter" data-category="Accessories">Accessories</button></div><input id="searchInput" class="search" placeholder="Search the collection..." aria-label="Search products"></div>
+    <div class="product-grid" id="productGrid"><div class="loading">Loading the collection…</div></div>
+  </section>
+  <section class="story" id="story"><div class="story-image"><img src="https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=1000" alt="Artisan craft workspace"></div><div><p class="eyebrow">A LITTLE ABOUT US</p><h2>Made slowly.<br><em>Loved daily.</em></h2><p>GharCraft brings together handmade-inspired pieces for everyday living. We believe the objects around us should tell a story, feel personal and bring warmth into a home.</p><p class="story-small">A student-built e-commerce project celebrating Indian craft and thoughtful design.</p></div></section>
+</main>
+<footer><a class="brand footer-brand" href="#"><span class="brand-mark">G</span><span>ghar<span class="brand-accent">craft</span><small>HANDMADE WITH HEART</small></span></a><p>© 2026 GharCraft. Crafted with care.</p><p>Full-stack demo store · Java + Spring Boot + MySQL</p></footer>
+
+<div class="overlay hidden" id="overlay"></div>
+<aside class="drawer" id="cartDrawer"><div class="drawer-head"><div><p class="eyebrow">YOUR SELECTION</p><h3>Your bag</h3></div><button class="close-btn" id="closeCart">×</button></div><div id="cartItems" class="cart-items"><p class="muted">Your bag is waiting for something lovely.</p></div><div class="cart-bottom"><div class="total-line"><span>Subtotal</span><strong id="cartTotal">₹0</strong></div><button class="primary-btn full" id="checkoutBtn">Continue to checkout</button><p class="tiny">Shipping details are collected at checkout. Demo project: no real payment is processed.</p></div></aside>
+
+<div class="modal hidden" id="authModal"><button class="close-btn modal-close" id="closeAuth">×</button><p class="eyebrow">WELCOME TO GHARCRAFT</p><h3 id="authTitle">Sign in</h3><form id="authForm"><div id="nameField" class="hidden"><label>Your name</label><input name="name" placeholder="Full name"></div><label>Email address</label><input name="email" type="email" required placeholder="you@example.com"><label>Password</label><input name="password" type="password" required minlength="6" placeholder="At least 6 characters"><button class="primary-btn full" id="authSubmit">Sign in</button></form><p class="switch-auth" id="switchAuth">New here? <button>Create an account</button></p><p class="form-message" id="authMessage"></p></div>
+
+<div class="modal hidden" id="checkoutModal"><button class="close-btn modal-close" id="closeCheckout">×</button><p class="eyebrow">ALMOST YOURS</p><h3>Delivery details</h3><form id="checkoutForm"><label>Full delivery address</label><textarea name="shippingAddress" required rows="4" placeholder="House / street, city, state, PIN code"></textarea><button class="primary-btn full">Place demo order</button></form><p class="tiny">This demo does not collect payment information or process real payments.</p><p class="form-message" id="checkoutMessage"></p></div>
+<div class="toast" id="toast"></div>
+<script src="/app.js"></script>
+</body></html>

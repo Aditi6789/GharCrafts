@@ -1,0 +1,34 @@
+const API = "/api";
+let currentUser = null, currentCategory = "", productsCache = [], isRegister = false;
+const $ = (id) => document.getElementById(id);
+const money = (n) => "₹" + Number(n).toLocaleString("en-IN", {maximumFractionDigits:2});
+async function request(path, options={}) {
+  const response = await fetch(API + path, {credentials:"same-origin", headers:{"Content-Type":"application/json", ...(options.headers||{})}, ...options});
+  const data = response.status === 204 ? null : await response.json().catch(()=>({}));
+  if (!response.ok) throw new Error(data?.error || data?.message || "Something went wrong. Please try again.");
+  return data;
+}
+function toast(message){const el=$("toast");el.textContent=message;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),2300);}
+function productCard(p){return `<article class="product-card"><div class="product-image"><img src="${escapeHtml(p.imageUrl||"")}" alt="${escapeHtml(p.name)}" loading="lazy" onerror="this.src='https://placehold.co/600x600/f3eee5/526b55?text=GharCraft'">${p.featured?'<span class="product-tag">CUSTOMER FAVOURITE</span>':""}</div><div class="product-info"><span class="product-category">${escapeHtml(p.category)}</span><h3>${escapeHtml(p.name)}</h3><p class="muted">${escapeHtml(p.description)}</p><div class="product-bottom"><span class="price">${money(p.price)}</span><button class="add-btn" onclick="addToCart(${p.id})">+ Add to bag</button></div></div></article>`;}
+function escapeHtml(value){return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+async function loadProducts(){try{const params=new URLSearchParams();if(currentCategory)params.set("category",currentCategory);if($("searchInput").value.trim())params.set("q",$("searchInput").value.trim());productsCache=await request("/products?"+params);$("productGrid").innerHTML=productsCache.length?productsCache.map(productCard).join(""):'<p class="muted">No products found. Try another search.</p>';}catch(e){$("productGrid").innerHTML='<p class="muted">Could not load products. Check that the application is running.</p>';}}
+async function addToCart(id){if(!currentUser){openAuth();toast("Please sign in to add items to your bag.");return;}try{await request("/cart/items",{method:"POST",body:JSON.stringify({productId:id,quantity:1})});toast("Added to your bag.");await loadCartCount();}catch(e){toast(e.message);}}
+async function loadCartCount(){if(!currentUser){$("cartCount").textContent="0";return;}try{const data=await request("/cart");$("cartCount").textContent=data.items.reduce((sum,i)=>sum+i.quantity,0);}catch(e){$("cartCount").textContent="0";}}
+async function showCart(){if(!currentUser){openAuth();return;}try{const data=await request("/cart");$("cartItems").innerHTML=data.items.length?data.items.map(i=>`<div class="cart-row"><img src="${escapeHtml(i.product.imageUrl)}" alt=""><div><h4>${escapeHtml(i.product.name)}</h4><p>${money(i.product.price)} each</p><div class="qty-controls"><button onclick="changeQty(${i.id},${i.quantity-1})">−</button><span>${i.quantity}</span><button onclick="changeQty(${i.id},${i.quantity+1})">+</button><button class="remove-btn" onclick="removeItem(${i.id})">Remove</button></div></div><strong>${money(i.product.price*i.quantity)}</strong></div>`).join(""):'<p class="muted">Your bag is waiting for something lovely.</p>';$("cartTotal").textContent=money(data.total);$("cartDrawer").classList.add("open");$("overlay").classList.remove("hidden");}catch(e){toast(e.message);}}
+async function changeQty(id,qty){try{if(qty<1){await removeItem(id);return;}await request(`/cart/items/${id}?quantity=${qty}`,{method:"PUT"});await showCart();await loadCartCount();}catch(e){toast(e.message);}}
+async function removeItem(id){try{await request(`/cart/items/${id}`,{method:"DELETE"});await showCart();await loadCartCount();}catch(e){toast(e.message);}}
+function closeCart(){$("cartDrawer").classList.remove("open");$("overlay").classList.add("hidden");}
+function openAuth(){isRegister=false;renderAuthMode();$("authMessage").textContent="";$("authModal").classList.remove("hidden");}
+function renderAuthMode(){$("authTitle").textContent=isRegister?"Create your account":"Sign in";$("authSubmit").textContent=isRegister?"Create account":"Sign in";$("nameField").classList.toggle("hidden",!isRegister);$("nameField").querySelector("input").required=isRegister;$("switchAuth").innerHTML=isRegister?'Already have an account? <button type="button">Sign in</button>':'New here? <button type="button">Create an account</button>';}
+$("switchAuth").addEventListener("click",()=>{isRegister=!isRegister;renderAuthMode();$("authMessage").textContent="";});
+$("authForm").addEventListener("submit",async e=>{e.preventDefault();const form=new FormData(e.target);const payload=Object.fromEntries(form.entries());try{currentUser=await request(isRegister?"/auth/register":"/auth/login",{method:"POST",body:JSON.stringify(payload)});$("authModal").classList.add("hidden");$("accountBtn").textContent="Hi, "+currentUser.name.split(" ")[0];toast("Welcome to GharCraft!");await loadCartCount();}catch(err){$("authMessage").textContent=err.message;}});
+$("accountBtn").addEventListener("click",async()=>{if(currentUser){if(confirm("Log out of GharCraft?")){await request("/auth/logout",{method:"POST"});currentUser=null;$("accountBtn").textContent="Sign in";await loadCartCount();toast("You have been logged out.");}}else openAuth();});
+$("cartBtn").addEventListener("click",showCart);$("closeCart").addEventListener("click",closeCart);$("overlay").addEventListener("click",closeCart);
+$("closeAuth").addEventListener("click",()=>$("authModal").classList.add("hidden"));
+$("filters").addEventListener("click",e=>{const btn=e.target.closest("[data-category]");if(!btn)return;currentCategory=btn.dataset.category;document.querySelectorAll(".filter").forEach(b=>b.classList.toggle("active",b===btn));loadProducts();});
+let searchTimer;$("searchInput").addEventListener("input",()=>{clearTimeout(searchTimer);searchTimer=setTimeout(loadProducts,250);});
+$("checkoutBtn").addEventListener("click",()=>{closeCart();$("checkoutModal").classList.remove("hidden");});
+$("closeCheckout").addEventListener("click",()=>$("checkoutModal").classList.add("hidden"));
+$("checkoutForm").addEventListener("submit",async e=>{e.preventDefault();const shippingAddress=new FormData(e.target).get("shippingAddress");try{const order=await request("/orders",{method:"POST",body:JSON.stringify({shippingAddress})});$("checkoutModal").classList.add("hidden");e.target.reset();toast("Order #"+order.id+" placed successfully!");await loadCartCount();}catch(err){$("checkoutMessage").textContent=err.message;}});
+async function init(){await loadProducts();try{const me=await request("/auth/me");if(me.authenticated){currentUser=me;$("accountBtn").textContent="Hi, "+me.name.split(" ")[0];}}catch(e){}await loadCartCount();}
+init();
